@@ -17,10 +17,16 @@ for line in sys.stdin:
 	line = line.strip()
 	tokens = line.split(" ")
 	if tokens[0] == 'comment':
-		producer.send(TOPIC1, value = temp)
+		producer.send(TOPIC1, value = line)
+		producer.send(TOPIC3, value = line)
 	elif tokens[0] == 'like':
 		producer.send(TOPIC2, value = line)
+		producer.send(TOPIC3, value = line)
 	elif tokens[0] == 'share':
+		producer.send(TOPIC3, value = line)
+	else:
+		producer.send(TOPIC1, value = line)
+		producer.send(TOPIC2, value = line)
 		producer.send(TOPIC3, value = line)
 
 producer.close()
