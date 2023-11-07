@@ -8,19 +8,19 @@ import json
 from kafka import KafkaConsumer
 
 # Define the topic name for client2
-TOPIC2 = sys.argv[1]
+TOPIC2 = sys.argv[2]
 
 result = {}
 
-consumer = KafkaConsumer(TOPIC2, bootstrap_servers='localhost:9092', group_id='client-2')
+consumer = KafkaConsumer(TOPIC2, bootstrap_servers='localhost:9092')
 
 for message in consumer:
     line = message.value.decode()
-
     tokens = line.split()
-    if len(tokens) < 4:
-        continue
-
+    
+    if line == 'EOF':
+    	break
+	
     action = tokens[0]
     user = tokens[2]
     post_id = tokens[3]
@@ -32,5 +32,5 @@ for message in consumer:
             result[user][post_id] = 0
         result[user][post_id] += 1
 
-sorted_result = dict(sorted(result.items()))
-print(json.dumps(sorted_result, indent=4))
+result_sorted = dict(sorted(result.items()))
+print(json.dumps(result_sorted, indent = 4))
