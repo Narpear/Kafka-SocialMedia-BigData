@@ -8,18 +8,18 @@ import json
 from kafka import KafkaConsumer
 
 # Define the topic name for client3
-TOPIC3 = sys.argv[1]
+TOPIC3 = sys.argv[3]
 
 result = {}
 
-consumer = KafkaConsumer(TOPIC3, bootstrap_servers='localhost:9092', group_id='client-3')
+consumer = KafkaConsumer(TOPIC3, bootstrap_servers='localhost:9092')
 
 for message in consumer:
     line = message.value.decode()
-
     tokens = line.split()
-    if len(tokens) < 4:
-        continue
+    
+    if line == 'EOF':
+    	break
 
     action = tokens[0]
     user = tokens[2]
@@ -36,11 +36,11 @@ for message in consumer:
         elif action == 'comment':
             result[user]['comments'] += 1
 
-sorted_result = dict(sorted(result.items()))
-popularity_result = {}
+result_sorted = dict(sorted(result.items()))
+final_result = {}
 
-for user, data in sorted_result.items():
+for user, data in result_sorted.items():
     popularity = (data['likes'] + 20 * data['shares'] + 5 * data['comments']) / 1000
-    popularity_result[user] = popularity
+    final_result[user] = popularity
 
-print(json.dumps(popularity_result, indent=4))
+print(json.dumps(final_result, indent = 4))
